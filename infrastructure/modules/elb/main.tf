@@ -8,17 +8,17 @@ output "beanstalk_application" {
 }
 
 resource "aws_iam_instance_profile" "beanstalk_service" {
-  name = "${local.environment}-beanstalk-service-user"
+  name = "${var.environment}-beanstalk-service-user"
   role = "${aws_iam_role.beanstalk_service.name}"
 }
 
 resource "aws_iam_instance_profile" "beanstalk_ec2" {
-  name = "${local.environment}-beanstalk-ec2-user"
+  name = "${var.environment}-beanstalk-ec2-user"
   role = "${aws_iam_role.beanstalk_ec2.name}"
 }
 
 resource "aws_iam_role" "beanstalk_service" {
-  name = "${local.environment}-beanstalk-service-role"
+  name = "${var.environment}-beanstalk-service-role"
 
   assume_role_policy = <<EOF
 {
@@ -42,7 +42,7 @@ EOF
 }
 
 resource "aws_iam_role" "beanstalk_ec2" {
-  name = "${local.environment}-beanstalk-ec2-role"
+  name = "${var.environment}-beanstalk-ec2-role"
 
   assume_role_policy = <<EOF
 {
@@ -62,7 +62,7 @@ EOF
 }
 
 resource "aws_iam_policy" "s3_writer" {
-  name        = "${local.environment}-s3_writer_policy"
+  name        = "${var.environment}-s3_writer_policy"
   description = "Policy to write s3"
 
   policy = <<EOF
@@ -111,9 +111,9 @@ resource "aws_iam_role_policy_attachment" "beanstalk_ec2_container" {
 
 
 resource "aws_elastic_beanstalk_environment" "lsccraffler" {
-  name                   = "lsccraffler-${local.environment}"
-  application            = "${data.terraform_remote_state.shared_services.beanstalk_application}"
-  solution_stack_name    = "64bit Amazon Linux 2018.03 v2.12.10 running Docker 18.06.1-ce"
+  name                   = "lsccraffler-${var.environment}"
+  application            = aws_aws_elastic_beanstalk_application.lsccraffler.name
+  solution_stack_name    = "64bit Amazon Linux 2018.03 v2.14.3 running Docker 18.09.9-ce"
   wait_for_ready_timeout = "20m"
   depends_on = [
     "aws_iam_role.beanstalk_service",
@@ -149,25 +149,25 @@ resource "aws_elastic_beanstalk_environment" "lsccraffler" {
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "InstanceType"
-    value     = "${local.instance_type}"
+    value     = "${var.instance_type}"
   }
 
   setting {
     namespace = "aws:autoscaling:launchconfiguration"
     name      = "SSHSourceRestriction"
-    value     = "tcp, 22, 22,${local.ip_prefix}${var.vpc_cidr}"
+    value     = "tcp, 22, 22,${var.ip_prefix}${var.vpc_cidr}"
   }
 
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MaxSize"
-    value     = "${local.max_nodes}"
+    value     = "${var.max_nodes}"
   }
 
   setting {
     namespace = "aws:autoscaling:asg"
     name      = "MinSize"
-    value     = "${local.min_nodes}"
+    value     = "${var.min_nodes}"
   }
 
   setting {
@@ -181,24 +181,6 @@ resource "aws_elastic_beanstalk_environment" "lsccraffler" {
     namespace = "aws:elasticbeanstalk:application"
     name      = "Application Healthcheck URL"
     value     = "${var.healthcheck_location}"
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "BASE_URL"
-    value     = "${local.base_url}"
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "LOGIN_URL"
-    value     = "${local.login_url}"
-  }
-
-  setting {
-    namespace = "aws:elasticbeanstalk:application:environment"
-    name      = "REPORTS_BUCKET"
-    value     = "${local.logs_prefix}-mobile-logs"
   }
 
   setting {
@@ -236,7 +218,7 @@ resource "aws_elastic_beanstalk_environment" "lsccraffler" {
   setting {
     namespace = "aws:elasticbeanstalk:cloudwatch:logs:health"
     name = "RetentionInDays"
-    value = "${local.retention_policy}"
+    value = "${var.retention_policy}"
   }
 
   setting {
@@ -248,7 +230,7 @@ resource "aws_elastic_beanstalk_environment" "lsccraffler" {
   setting {
     namespace = "aws:elasticbeanstalk:cloudwatch:logs"
     name = "RetentionInDays"
-    value = "${local.retention_policy}"
+    value = "${var.retention_policy}"
   }
 
   setting {
@@ -260,7 +242,7 @@ resource "aws_elastic_beanstalk_environment" "lsccraffler" {
   setting {
     namespace = "aws:autoscaling:updatepolicy:rollingupdate"
     name      = "RollingUpdateEnabled"
-    value     = "${local.rolling_update}"
+    value     = "${var.rolling_update}"
   }
 
   setting {
@@ -302,7 +284,7 @@ resource "aws_elastic_beanstalk_environment" "lsccraffler" {
   setting {
     namespace = "aws:elbv2:listener:443"
     name      = "SSLCertificateArns"
-    value     = "${local.certificate_arn}"
+    value     = "${var.certificate_arn}"
   }
   
   setting {

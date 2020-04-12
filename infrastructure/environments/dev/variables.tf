@@ -93,21 +93,10 @@ variable "workspace_to_base_url_map" {
   }
 }
 
-# This needs to be done as part of terraform
-variable "workspace_to_certification_map" {
-  description = "The SSL certificate arn to use on the load balance of the environment"
-  type = "map"
-  default = {
-    dev = "arn:aws:acm:eu-west-2:788981310941:certificate/2a83d884-ba10-477c-aace-986892e3a17d"
-    prod = "arn:aws:acm:eu-west-2:788981310941:certificate/f15cfb5d-07d6-4c2a-b154-20f37371b3f2"
-  }
-}
-
 locals {
   environment = "${lookup(var.workspace_to_environment_map, terraform.workspace, "test")}"
   waf_prefix = "${lookup(var.workspace_to_waf_rule_map, terraform.workspace)}"
   ip_prefix = "${lookup(var.workspace_to_ip_map, terraform.workspace, "172.32")}"
-  certificate_arn = "${lookup(var.workspace_to_certification_map, terraform.workspace, "arn:aws:acm:eu-west-2:788981310941:certificate/2a83d884-ba10-477c-aace-986892e3a17d")}"
   base_url = "${lookup(var.workspace_to_base_url_map, terraform.workspace, "https://lscc_raffler.codurance.io")}"
   logs_prefix = "${lookup(var.workspace_to_base_environment_map, terraform.workspace, "test")}"
   retention_policy = "${lookup(var.workspace_to_retention_policy_map, terraform.workspace, 7)}"
