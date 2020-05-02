@@ -34,7 +34,7 @@ jobs:
     - run:
         name: Terraform Apply
         working_directory: infrastructure/environments/<<parameters.environment>>
-        command: terraform apply -auto-aprove
+        command: terraform apply -auto-approve
 
   test:
     <<: *clojure_jobs
