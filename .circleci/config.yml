@@ -14,8 +14,11 @@ jobs:
     steps:
     - checkout
     - run:
+        name: Terraform Init
+        command: terraform init
+    - run:
         name: Terraform Apply
-        command: terraform apply --auto-aprove
+        command: terraform apply -auto-aprove
 
   test:
     <<: *clojure_jobs
@@ -34,9 +37,14 @@ jobs:
 workflows:
   deploy_dev:
     jobs:
-      - terraform
+      - test:
+          filters:
+            branches:
+              ignore: master
 
   deploy_prod:
     jobs:
-      - terraform
-  
+      - test:
+          filters:
+            branches:
+              only: master
