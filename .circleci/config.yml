@@ -32,8 +32,6 @@ jobs:
         command: lein uberjar
 
 workflows:
-  pull_request:
-
   deploy_dev:
     jobs:
       - terraform
