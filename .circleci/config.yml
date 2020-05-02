@@ -13,7 +13,9 @@ jobs:
     <<: *terraform_jobs
     steps:
     - checkout
-    - terraform apply --auto-aprove
+    - run:
+        name: Terraform Apply
+        command: terraform apply --auto-aprove
 
   test:
     <<: *clojure_jobs
