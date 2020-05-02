@@ -62,14 +62,17 @@ workflows:
 
   deploy_prod:
     jobs:
-      - terraform:
-          environment: dev
-          context: aws-playground
-          filters:
-            branches:
-              only: master
       - test:
           filters:
             branches:
               only: master
 
+      - build:
+          requires:
+            - test
+
+      - terraform:
+          environment: dev
+          context: aws-playground
+          requires:
+            - build
