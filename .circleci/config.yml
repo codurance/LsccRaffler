@@ -25,9 +25,11 @@ jobs:
     - setup_aws_access
     - run:
         name: Terraform Init
+        working_directory: infrastructure
         command: terraform init
     - run:
         name: Terraform Apply
+        working_directory: infrastructure
         command: terraform apply -auto-aprove
 
   test:
@@ -35,14 +37,16 @@ jobs:
     steps:
     - checkout
     - run:
-        command: cd lscc_raffler && lein test
+        working_directory: lscc_raffler
+        command: lein test
 
   build:
     <<: *clojure_jobs
     steps:
     - checkout
     - run:
-        command: cd lscc_raffler && lein uberjar
+        working_directory: lscc_raffler
+        command: lein uberjar
 
 workflows:
   deploy_dev:
