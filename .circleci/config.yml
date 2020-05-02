@@ -25,14 +25,14 @@ jobs:
     steps:
     - checkout
     - run:
-        command: lein test
+        command: cd lscc_raffler && lein test
 
   build:
     <<: *clojure_jobs
     steps:
     - checkout
     - run:
-        command: lein uberjar
+        command: cd lscc_raffler && lein uberjar
 
 workflows:
   deploy_dev:
