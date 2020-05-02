@@ -1,0 +1,42 @@
+version: 2.1
+
+terraform_jobs: &terraform_jobs
+  docker:
+    - image: hashicorp/terraform:0.12.24
+
+clojure_jobs: &clojure_jobs
+  docker:
+    - image: circleci/clojure:openjdk-14-lein-2.9.1-buster
+
+jobs:
+  terraform:
+    <<: *terraform_jobs
+    steps:
+    - checkout
+    - terraform apply --auto-aprove
+
+  test:
+    <<: *clojure_jobs
+    steps:
+    - checkout
+    - run:
+        command: lein test
+
+  build:
+    <<: *clojure_jobs
+    steps:
+    - checkout
+    - run:
+        command: lein uberjar
+
+workflows:
+  pull_request:
+
+  deploy_dev:
+    jobs:
+      - terraform
+
+  deploy_prod:
+    jobs:
+      - terraform
+  
