@@ -1,6 +1,7 @@
 resource "aws_elastic_beanstalk_application" "lsccraffler" {
   name        = "lsccraffler"
   description = "Raffler for LSCC events"
+  tags = local.common_tags
 }
 
 output "beanstalk_application" {
@@ -19,6 +20,7 @@ resource "aws_iam_instance_profile" "beanstalk_ec2" {
 
 resource "aws_iam_role" "beanstalk_service" {
   name = "${var.environment}-beanstalk-service-role"
+  tags = local.common_tags
 
   assume_role_policy = <<EOF
 {
@@ -43,6 +45,7 @@ EOF
 
 resource "aws_iam_role" "beanstalk_ec2" {
   name = "${var.environment}-beanstalk-ec2-role"
+  tags = local.common_tags
 
   assume_role_policy = <<EOF
 {
@@ -305,6 +308,8 @@ resource "aws_elastic_beanstalk_environment" "lsccraffler" {
     name      = "IamInstanceProfile"
     value     = aws_iam_instance_profile.beanstalk_ec2.name
   }
+
+  tags = local.common_tags
 }
 
 output "lsccraffler_cname" {

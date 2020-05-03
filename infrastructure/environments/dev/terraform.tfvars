@@ -5,3 +5,5 @@ max_nodes        = "1"
 retention_policy = 7
 rolling_update   = "false"
 environment      = "dev"
+owner            = "Jorge Gueorguiev Garcia"
+project          = "Lscc Raffler"

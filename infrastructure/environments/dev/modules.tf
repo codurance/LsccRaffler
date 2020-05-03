@@ -6,4 +6,6 @@ module "elb" {
   max_nodes      = var.max_nodes
   instance_type  = var.instance_type
   ip_prefix      = var.ip_prefix
+  owner          = var.owner
+  project        = var.project
 }

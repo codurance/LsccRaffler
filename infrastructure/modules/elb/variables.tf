@@ -58,3 +58,16 @@ variable "ip_prefix" {
 # }
 
 
+variable "owner" {
+  type = string
+}
+variable "project" {
+  type = string
+}
+
+locals {
+  common_tags = {
+    Owner   = var.owner
+    Project = var.project
+  }
+}

@@ -1,3 +1,11 @@
+# TAGS variables
+variable "owner" {
+  type = string
+}
+variable "project" {
+  type = string
+}
+
 variable "domain_name" {
   description = "the name of the domain"
   default     = "lsccraffler"
